@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import { ref, onValue, off, query, orderByChild, limitToLast } from 'firebase/database';
 
+
 // Sidebar Component with mobile support
 const Sidebar = ({ activeTab, setActiveTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const menuItems = [
@@ -384,8 +385,9 @@ const StudentDashboard = () => {
     }
   ];
 
+  // UPDATED: Now navigates to the detail page instead of showing the local modal
   const handleViewDetails = (complaint) => {
-    setSelectedComplaint(complaint);
+    navigate(`/admin/complaint/${complaint.id}`);
   };
 
   return (
@@ -543,7 +545,7 @@ const StudentDashboard = () => {
         </div>
       </main>
 
-      {/* Complaint Details Modal */}
+      {/* COMPONENT REMAINS IN FILE BUT IS NO LONGER TRIGGERED BY EYE ICON */}
       {selectedComplaint && (
         <ComplaintDetailsModal 
           complaint={selectedComplaint} 
