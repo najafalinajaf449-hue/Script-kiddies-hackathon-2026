@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import { ref, push, set, serverTimestamp } from 'firebase/database';
-// Note: Firebase Realtime Database doesn't have storage, you'll need to add getStorage if you want file uploads
 
 const ComplaintForm = () => {
   const navigate = useNavigate();
@@ -13,10 +12,8 @@ const ComplaintForm = () => {
     priority: '',
     description: '',
     orderId: ''
-    // Removed attachments since Realtime DB doesn't handle files well
   });
 
-  // Generate unique complaint ID
   const generateComplaintId = () => {
     const prefix = 'COMP';
     const random = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -24,7 +21,6 @@ const ComplaintForm = () => {
     return `${prefix}-${random}-${timestamp}`;
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -33,27 +29,21 @@ const ComplaintForm = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Validate required fields
       if (!formData.subject || !formData.description || !formData.category || !formData.priority) {
         alert('Please fill in all required fields');
         setLoading(false);
         return;
       }
 
-      // Generate complaint ID
       const complaintId = generateComplaintId();
-
-      // Create a new reference in the 'complaints' path
       const complaintsRef = ref(db, 'complaints');
       const newComplaintRef = push(complaintsRef);
 
-      // Prepare complaint data
       const complaintData = {
         complaintId: complaintId,
         subject: formData.subject,
@@ -62,20 +52,18 @@ const ComplaintForm = () => {
         description: formData.description,
         orderId: formData.orderId || null,
         status: 'Pending',
-        createdAt: Date.now(), // Realtime DB doesn't have serverTimestamp
+        createdAt: Date.now(),
         updatedAt: Date.now(),
         userId: 'alex@university.edu',
         userName: 'Alex Rivera',
         userAvatar: 'AR'
       };
 
-      // Save to Realtime Database
       await set(newComplaintRef, complaintData);
       
       console.log('Complaint submitted with ID: ', newComplaintRef.key);
       alert('Complaint submitted successfully!');
       
-      // Reset form and redirect
       setFormData({
         subject: '',
         category: '',
@@ -94,12 +82,11 @@ const ComplaintForm = () => {
     }
   };
 
-  // Rest of your JSX (same as before, but remove the attachments section)
   return (
     <div style={{
       backgroundColor: '#0a0a0a',
       color: 'white',
-      padding: '40px',
+      padding: '20px',
       fontFamily: 'Arial, sans-serif',
       minHeight: '100vh',
       display: 'flex',
@@ -107,7 +94,7 @@ const ComplaintForm = () => {
       justifyContent: 'center',
       position: 'relative'
     }}>
-      {/* Back Button */}
+      {/* Back Button - Responsive */}
       <button
         onClick={() => navigate('/')}
         disabled={loading}
@@ -119,7 +106,7 @@ const ComplaintForm = () => {
           color: 'white',
           border: '1px solid #444',
           borderRadius: '8px',
-          padding: '12px 24px',
+          padding: '10px 16px',
           cursor: loading ? 'not-allowed' : 'pointer',
           display: 'flex',
           alignItems: 'center',
@@ -128,10 +115,24 @@ const ComplaintForm = () => {
           fontWeight: '500',
           transition: 'all 0.3s',
           fontFamily: 'Arial, sans-serif',
-          opacity: loading ? 0.5 : 1
+          opacity: loading ? 0.5 : 1,
+          zIndex: 10
+        }}
+        onMouseEnter={(e) => {
+          if (!loading) {
+            e.currentTarget.style.backgroundColor = '#333';
+            e.currentTarget.style.borderColor = '#666';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!loading) {
+            e.currentTarget.style.backgroundColor = '#222';
+            e.currentTarget.style.borderColor = '#444';
+          }
         }}
       >
-        ← Back to Dashboard
+        ← <span style={{ display: 'none', '@media (min-width: 640px)': { display: 'inline' } }}>Back to Dashboard</span>
+        <span style={{ display: 'inline', '@media (min-width: 640px)': { display: 'none' } }}>Back</span>
       </button>
 
       <div style={{
@@ -140,12 +141,13 @@ const ComplaintForm = () => {
         backgroundColor: '#111',
         border: '1px solid #333',
         borderRadius: '12px',
-        padding: '40px',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
+        padding: '30px 20px',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+        margin: '60px 0 20px'
       }}>
         <h2 style={{
-          margin: '0 0 30px 0',
-          fontSize: '28px',
+          margin: '0 0 20px 0',
+          fontSize: 'clamp(22px, 5vw, 28px)',
           color: '#fff',
           textAlign: 'center',
           fontWeight: 'bold'
@@ -156,15 +158,15 @@ const ComplaintForm = () => {
         <p style={{
           margin: '0 0 25px 0',
           color: '#aaa',
-          fontSize: '16px',
+          fontSize: 'clamp(14px, 4vw, 16px)',
           textAlign: 'center'
         }}>
           Please describe about your service/order
         </p>
         
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: '#ccc', fontSize: '14px' }}>
+            <label style={{ display: 'block', marginBottom: '6px', color: '#ccc', fontSize: '14px' }}>
               Subject <span style={{ color: '#ff6b6b' }}>*</span>
             </label>
             <input 
@@ -177,12 +179,12 @@ const ComplaintForm = () => {
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '15px',
+                padding: '14px',
                 backgroundColor: '#222',
                 border: '1px solid #444',
                 borderRadius: '8px',
                 color: 'white',
-                fontSize: '16px',
+                fontSize: '15px',
                 outline: 'none',
                 transition: 'border-color 0.3s',
                 boxSizing: 'border-box',
@@ -191,9 +193,16 @@ const ComplaintForm = () => {
             />
           </div>
           
-          <div style={{ display: 'flex', gap: '15px' }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '8px', color: '#ccc', fontSize: '14px' }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            '@media (min-width: 480px)': {
+              flexDirection: 'row'
+            }
+          }}>
+            <div style={{ flex: 1, width: '100%' }}>
+              <label style={{ display: 'block', marginBottom: '6px', color: '#ccc', fontSize: '14px' }}>
                 Category <span style={{ color: '#ff6b6b' }}>*</span>
               </label>
               <select 
@@ -204,12 +213,12 @@ const ComplaintForm = () => {
                 disabled={loading}
                 style={{
                   width: '100%',
-                  padding: '15px',
+                  padding: '14px',
                   backgroundColor: '#222',
                   border: '1px solid #444',
                   borderRadius: '8px',
                   color: 'white',
-                  fontSize: '16px',
+                  fontSize: '15px',
                   outline: 'none',
                   appearance: 'none',
                   backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUw3IDUuNUw2LjUgNyBMMSAyIEwxIDUuNUw2LjUgMiBMNyAzIEw2IDQuNUwxIDEuNSIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+")',
@@ -230,8 +239,8 @@ const ComplaintForm = () => {
               </select>
             </div>
             
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '8px', color: '#ccc', fontSize: '14px' }}>
+            <div style={{ flex: 1, width: '100%' }}>
+              <label style={{ display: 'block', marginBottom: '6px', color: '#ccc', fontSize: '14px' }}>
                 Priority <span style={{ color: '#ff6b6b' }}>*</span>
               </label>
               <select 
@@ -242,12 +251,12 @@ const ComplaintForm = () => {
                 disabled={loading}
                 style={{
                   width: '100%',
-                  padding: '15px',
+                  padding: '14px',
                   backgroundColor: '#222',
                   border: '1px solid #444',
                   borderRadius: '8px',
                   color: 'white',
-                  fontSize: '16px',
+                  fontSize: '15px',
                   outline: 'none',
                   appearance: 'none',
                   backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUw3IDUuNUw2LjUgNyBMMSAyIEwxIDUuNUw2LjUgMiBMNyAzIEw2IDQuNUwxIDEuNSIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+")',
@@ -269,7 +278,7 @@ const ComplaintForm = () => {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: '#ccc', fontSize: '14px' }}>
+            <label style={{ display: 'block', marginBottom: '6px', color: '#ccc', fontSize: '14px' }}>
               Description <span style={{ color: '#ff6b6b' }}>*</span>
             </label>
             <textarea
@@ -282,12 +291,12 @@ const ComplaintForm = () => {
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '15px',
+                padding: '14px',
                 backgroundColor: '#222',
                 border: '1px solid #444',
                 borderRadius: '8px',
                 color: 'white',
-                fontSize: '16px',
+                fontSize: '15px',
                 outline: 'none',
                 transition: 'border-color 0.3s',
                 resize: 'vertical',
@@ -299,7 +308,7 @@ const ComplaintForm = () => {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: '#ccc', fontSize: '14px' }}>
+            <label style={{ display: 'block', marginBottom: '6px', color: '#ccc', fontSize: '14px' }}>
               Order/Service ID
             </label>
             <input 
@@ -311,12 +320,12 @@ const ComplaintForm = () => {
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '15px',
+                padding: '14px',
                 backgroundColor: '#222',
                 border: '1px solid #444',
                 borderRadius: '8px',
                 color: 'white',
-                fontSize: '16px',
+                fontSize: '15px',
                 outline: 'none',
                 transition: 'border-color 0.3s',
                 boxSizing: 'border-box',
@@ -335,7 +344,7 @@ const ComplaintForm = () => {
               color: 'white',
               border: 'none',
               borderRadius: '8px',
-              fontSize: '18px',
+              fontSize: 'clamp(16px, 4vw, 18px)',
               fontWeight: 'bold',
               cursor: loading ? 'not-allowed' : 'pointer',
               transition: 'all 0.3s',
