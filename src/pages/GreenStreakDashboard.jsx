@@ -1,9 +1,39 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function GreenStreakDashboard() {
   const navigate = useNavigate();
+
+  const [userName, setUserName] = useState("");
+  const [points, setPoints] = useState(0);
+
+  // 🔐 Protect Route (Redirect if not logged in)
+  useEffect(() => {
+    const email = localStorage.getItem("userEmail");
+    if (!email) {
+      navigate("/auth");
+      return;
+    }
+
+    const fetchUser = async () => {
+      const userRef = doc(db, "users", email);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        setUserName(userSnap.data().name);
+        setPoints(userSnap.data().points);
+      }
+    };
+
+    fetchUser();
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userEmail");
+    navigate("/");
+  };
 
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -24,10 +54,10 @@ export default function GreenStreakDashboard() {
     <div className="min-h-screen font-display text-slate-800 bg-gradient-to-br from-green-50 via-white to-green-100">
 
       {/* ================= NAVBAR ================= */}
-      
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-primary/10 px-8 py-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
 
+          {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-md">
               <span className="material-symbols-outlined text-white">
@@ -38,48 +68,45 @@ export default function GreenStreakDashboard() {
               Green<span className="text-primary">Streak</span>
             </span>
           </div>
-          <Link
-  to="/"
-  className="px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:scale-105 transition-all"
->
-  🏠 Home
-</Link>
 
+          {/* Right Controls */}
+          <div className="flex items-center gap-4">
 
-          <div className="hidden md:flex gap-10 text-sm font-medium">
-            <span className="text-primary border-b-2 border-primary pb-1">
-              Dashboard
-            </span>
-            <span className="text-slate-500 hover:text-primary cursor-pointer transition">
-              Challenges
-            </span>
-            <span className="text-slate-500 hover:text-primary cursor-pointer transition">
-              Community
-            </span>
-            <span className="text-slate-500 hover:text-primary cursor-pointer transition">
-              Impact
-            </span>
+            <Link
+              to="/"
+              className="px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:scale-105 transition-all"
+            >
+              🏠 Home
+            </Link>
+
+            <button
+              onClick={() => navigate("/impact")}
+              className="bg-white border border-primary text-primary px-4 py-2 rounded-full text-sm font-semibold shadow-sm hover:scale-105 transition-all"
+            >
+              📊 Impact
+            </button>
+
+            <button
+              onClick={() =>
+                window.open(
+                  "https://subjecttoclimate.org/teacher-guides/10-climate-change-games-for-the-classroom#Shopping",
+                  "_blank"
+                )
+              }
+              className="bg-primary text-white px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:scale-110 hover:shadow-primary/50 transition-all duration-300"
+            >
+              🎮 Game
+            </button>
+
+            {/* 🔥 NEW LOGOUT BUTTON */}
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:scale-105 transition-all"
+            >
+              🚪 Logout
+            </button>
+
           </div>
-          <button
-  onClick={() => navigate("/impact")}
-  className="bg-white border border-primary text-primary px-4 py-2 rounded-full text-sm font-semibold shadow-sm hover:scale-105 transition-all"
->
-  📊 Impact Tracker
-</button>
-
-
-          <button
-            onClick={() =>
-              window.open(
-                "https://subjecttoclimate.org/teacher-guides/10-climate-change-games-for-the-classroom#Shopping",
-                "_blank"
-              )
-            }
-            className="bg-primary text-white px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:scale-110 hover:shadow-primary/50 transition-all duration-300"
-          >
-            🎮 Game
-          </button>
-
         </div>
       </nav>
 
@@ -88,9 +115,16 @@ export default function GreenStreakDashboard() {
 
         {/* HEADER */}
         <div>
-          <h1 className="text-3xl font-bold">Hello, Alex 👋</h1>
+          <h1 className="text-3xl font-bold">
+            Hello, {userName || "Eco Warrior"} 👋
+          </h1>
+
           <p className="text-slate-500 mt-1">
             Ready for your next green act today?
+          </p>
+
+          <p className="text-primary font-bold mt-3 text-lg">
+            Points: {points}
           </p>
         </div>
 
@@ -147,10 +181,7 @@ export default function GreenStreakDashboard() {
 
             <div className="grid grid-cols-7 gap-y-6 text-center">
               {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-                <div
-                  key={d}
-                  className="text-xs font-bold text-slate-400 uppercase"
-                >
+                <div key={d} className="text-xs font-bold text-slate-400 uppercase">
                   {d}
                 </div>
               ))}
@@ -189,6 +220,7 @@ export default function GreenStreakDashboard() {
               })}
             </div>
           </div>
+
         </div>
       </main>
     </div>

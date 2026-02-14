@@ -1,19 +1,19 @@
+// Import the functions you need
 import { initializeApp } from "firebase/app";
-// 1. You MUST import the database tool
-import { getDatabase } from "firebase/database"; 
+import { getFirestore } from "firebase/firestore";
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAqrJ9xosy5BmXkR3ejfLx2iu5Yy4NRwv4",
-  authDomain: "project-web-aed55.firebaseapp.com",
-  databaseURL: "https://project-web-aed55-default-rtdb.firebaseio.com",
-  projectId: "project-web-aed55",
-  storageBucket: "project-web-aed55.firebasestorage.app",
-  messagingSenderId: "843600993283",
-  appId: "1:843600993283:web:5c68fb9a5cb0f05580c236"
+  apiKey: "AIzaSyC7nw6KQ7K-uQb_-dqhci1fQ38OPxhoqu4",
+  authDomain: "greenstreak-d7860.firebaseapp.com",
+  projectId: "greenstreak-d7860",
+  storageBucket: "greenstreak-d7860.firebasestorage.app",
+  messagingSenderId: "758233568149",
+  appId: "1:758233568149:web:8673951d455f2812819c9c"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// 2. Initialize the database and EXPORT it so CampusVoice.jsx can see it
-export const db = getDatabase(app);
+// 🔥 Initialize Firestore and export it
+export const db = getFirestore(app);
