@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 export default function HomePage() {
   const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
+  
+  
 
 
   return (

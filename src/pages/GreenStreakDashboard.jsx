@@ -55,45 +55,62 @@ export default function GreenStreakDashboard() {
   return (
     <div className="min-h-screen font-display text-slate-800 bg-gradient-to-br from-green-50 via-white to-green-100">
 
-      {/* ================= NAVBAR ================= */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-primary/10 px-8 py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+     {/* ================= NAVBAR ================= */}
+<nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-primary/10 px-8 py-4 shadow-sm">
+  <div className="max-w-7xl mx-auto flex justify-between items-center">
 
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-md">
-              <span className="material-symbols-outlined text-white">
-                eco
-              </span>
-            </div>
-            <span className="text-xl font-bold">
-              Green<span className="text-primary">Streak</span>
-            </span>
-          </div>
+    {/* LOGO */}
+    <div className="flex items-center gap-3">
+      <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-md">
+        <span className="material-symbols-outlined text-white">
+          eco
+        </span>
+      </div>
+      <span className="text-xl font-bold">
+        Green<span className="text-primary">Streak</span>
+      </span>
+    </div>
 
-          <div className="flex items-center gap-4">
-            <Link
-              to="/"
-              className="px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:scale-105 transition-all"
-            >
-              🏠 Home
-            </Link>
+    {/* RIGHT SIDE BUTTONS */}
+    <div className="flex items-center gap-4">
 
-            <button
-              onClick={() => navigate("/impact")}
-              className="bg-white border border-primary text-primary px-4 py-2 rounded-full text-sm font-semibold shadow-sm hover:scale-105 transition-all"
-            >
-              📊 Impact
-            </button>
+      <Link
+        to="/"
+        className="px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:scale-105 transition-all"
+      >
+        🏠 Home
+      </Link>
 
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:scale-105 transition-all"
-            >
-              🚪 Logout
-            </button>
-          </div>
-        </div>
-      </nav>
+      <button
+        onClick={() => navigate("/impact")}
+        className="bg-white border border-primary text-primary px-4 py-2 rounded-full text-sm font-semibold shadow-sm hover:scale-105 transition-all"
+      >
+        📊 Impact
+      </button>
+
+      {/* 🎮 GAME BUTTON ADDED */}
+      <button
+        onClick={() =>
+          window.open(
+            "https://subjecttoclimate.org/teacher-guides/10-climate-change-games-for-the-classroom#Shopping",
+            "_blank"
+          )
+        }
+        className="bg-primary text-white px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:scale-110 hover:shadow-primary/50 transition-all duration-300"
+      >
+        🎮 Game
+      </button>
+
+      <button
+        onClick={handleLogout}
+        className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:scale-105 transition-all"
+      >
+        🚪 Logout
+      </button>
+
+    </div>
+  </div>
+</nav>
 
       {/* ================= MAIN ================= */}
       <main className="max-w-7xl mx-auto px-8 py-12 space-y-12">
