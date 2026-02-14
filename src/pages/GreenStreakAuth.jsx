@@ -17,10 +17,17 @@ export default function GreenStreakAuth() {
     e.preventDefault();
     setError("");
 
-    if (!email || !password || (!isLogin && !fullName)) {
-      setError("Please fill all required fields");
-      return;
-    }
+  if (!email || !password || (!isLogin && !fullName)) {
+  setError("Please fill all required fields");
+  return;
+}
+
+// 🔐 Password length validation (Signup only)
+if (!isLogin && password.length < 8) {
+  setError("Password must be at least 8 characters long.");
+  return;
+}
+
 
     try {
       const userRef = doc(db, "users", email);
