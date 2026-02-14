@@ -1,123 +1,87 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function GreenStreakAuth() {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (
+      email === "najafali449@gmail.com" &&
+      password === "GREENSTREAK1122"
+    ) {
+      navigate("/dashboard");
+    } else {
+      setError("Invalid email or password");
+    }
+  };
 
   return (
-    <main className="flex min-h-screen bg-background-light dark:bg-background-dark font-display antialiased text-neutral-800 dark:text-neutral-100 overflow-hidden">
-      
+    <main className="flex min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 font-display antialiased text-neutral-800 dark:text-neutral-100 overflow-hidden">
+
       {/* LEFT SIDE */}
-      <section className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-neutral-eco-800">
+      <section className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGt7EsJh7SohZBmHELNmoE-9tDN4FK_8B6-fUoil7WZmSWZWwm2bxRkCMWUFkmowIHu1wMgOgOX0NAS9Gx9Xr0TOQm9j7pEgWL-nvyHnhM2IovX4-bthIjZ53ygEb8lJevCQY9wATQ1_dNM4OFJ7ksciOVus_Nm_rIqEWrBf91qhormPndm1747E4tFqlXs-fsqMQafLtQA3K8MELuSW_0_-2MJBVBVFDEvhI21HSs4l_ofneANn-R4SneCtZoklxYTWKmZrJJ7ow"
-          alt="Lush misty green forest"
-          className="absolute inset-0 w-full h-full object-cover"
+          alt="Forest"
+          className="absolute inset-0 w-full h-full object-cover float-slow"
         />
-
-        <div className="relative z-10 w-full flex flex-col justify-between p-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <span className="material-icons text-background-dark">
-                trending_up
-              </span>
-            </div>
-            <span className="text-2xl font-bold text-white">
-              GreenStreak
-            </span>
-          </div>
-
-          {/* Hero Text */}
-          <div className="max-w-md">
-            <h1 className="text-5xl font-bold text-white leading-tight mb-6">
-              Small habits, <br />
-              <span className="text-primary">massive impact.</span>
-            </h1>
-            <p className="text-lg text-neutral-100/80">
-              Join 50,000+ eco-warriors gamifying their journey toward a sustainable lifestyle.
-            </p>
-          </div>
-
-          {/* Testimonial */}
-          <div className="glass-panel rounded-xl p-6 max-w-sm">
-            <p className="text-sm text-white italic">
-              "GreenStreak helped me reduce my plastic waste by 40% in just three months."
-            </p>
-          </div>
-        </div>
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
       </section>
 
       {/* RIGHT SIDE */}
       <section className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-md space-y-8 fade-in-up bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-10 rounded-3xl shadow-2xl">
 
-          {/* Header */}
           <div>
             <h2 className="text-3xl font-bold mb-2">
-              Create your account
+              Login to <span className="text-primary">GreenStreak</span>
             </h2>
             <p className="text-neutral-500">
-              Start your sustainability streak today.
+              Enter your credentials to continue.
             </p>
           </div>
 
-          {/* Google Button */}
-          <button className="w-full flex items-center justify-center gap-3 px-6 py-3 border rounded-full bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition">
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHJ8ecNd4e1XoRhO1OxEMZUVyikIegFwTlHyAwmlHN0iq4eiNCisw2JClQCVYw4rMAX8NSjAEo0c4iJEPKTyu211W2FqmecFD62_fTARQa0uWe34RB6GSI0-F9IBertHDEuESA69HrFeSF9ZRxcnTaBlqVs2TCwVfTcipjWdnP3lJ2AKtGiHo8l6tN1tcXDgWQrpxd3Jz0gENAzyDbbjPWUAiVlAZAIORL2i8FPMlz_BzcTxln1PU5amamGFNnooSoOUSw_SdAIUY"
-              alt="Google"
-              className="w-5 h-5"
-            />
-            <span className="font-medium">Sign up with Google</span>
-          </button>
+          <form onSubmit={handleLogin} className="space-y-6">
 
-          {/* Divider */}
-          <div className="relative flex items-center py-2">
-            <div className="flex-grow border-t" />
-            <span className="mx-4 text-xs uppercase tracking-widest text-neutral-400">
-              Or with email
-            </span>
-            <div className="flex-grow border-t" />
-          </div>
-
-          {/* Form */}
-          <form className="space-y-5">
+            {/* EMAIL */}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                placeholder="Jane Doe"
-                className="w-full px-5 py-3 rounded-full border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Email Address
+              <label className="block text-sm font-medium mb-2">
+                Email
               </label>
               <input
                 type="email"
-                placeholder="jane@example.com"
-                className="w-full px-5 py-3 rounded-full border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="w-full px-5 py-3 rounded-full border border-slate-300 focus:ring-4 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-300 shadow-sm hover:shadow-md"
               />
             </div>
 
+            {/* PASSWORD */}
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-sm font-medium mb-2">
                 Password
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  className="w-full px-5 py-3 rounded-full border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  className="w-full px-5 py-3 rounded-full border border-slate-300 focus:ring-4 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-300 shadow-sm hover:shadow-md"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-primary transition"
                 >
                   <span className="material-icons text-lg">
                     {showPassword ? "visibility" : "visibility_off"}
@@ -126,27 +90,22 @@ export default function GreenStreakAuth() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input type="checkbox" className="h-4 w-4 text-primary" />
-              <span className="text-xs text-neutral-500">
-                I agree to the Terms and Privacy Policy.
-              </span>
-            </div>
+            {/* ERROR */}
+            {error && (
+              <p className="text-red-500 text-sm bg-red-100 dark:bg-red-900/30 px-4 py-2 rounded-lg animate-pulse">
+                {error}
+              </p>
+            )}
 
+            {/* LOGIN BUTTON */}
             <button
               type="submit"
-              className="w-full py-4 bg-neutral-eco-800 dark:bg-primary text-white dark:text-neutral-900 font-bold rounded-full hover:scale-[1.02] transition"
+              className="w-full py-4 bg-primary text-white font-bold rounded-full shadow-lg hover:scale-105 hover:shadow-primary/40 transition-all duration-300"
             >
-              Create Account
+              Login
             </button>
-          </form>
 
-          <p className="text-center text-sm text-neutral-500">
-            Already have an account?{" "}
-            <a href="#" className="font-bold hover:underline">
-              Log in
-            </a>
-          </p>
+          </form>
         </div>
       </section>
     </main>
