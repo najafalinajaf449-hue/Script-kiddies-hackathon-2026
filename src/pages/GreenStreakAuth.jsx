@@ -17,16 +17,41 @@ export default function GreenStreakAuth() {
     e.preventDefault();
     setError("");
 
-  if (!email || !password || (!isLogin && !fullName)) {
+ // Required fields check
+if (!email || !password || (!isLogin && !fullName)) {
   setError("Please fill all required fields");
   return;
 }
 
-// 🔐 Password length validation (Signup only)
-if (!isLogin && password.length < 8) {
-  setError("Password must be at least 8 characters long.");
+// 🔹 NAME VALIDATION (Signup only)
+if (!isLogin) {
+  const nameRegex = /^[A-Za-z ]+$/;
+  if (!nameRegex.test(fullName)) {
+    setError("Name should only contain letters and spaces.");
+    return;
+  }
+}
+
+// 🔹 EMAIL VALIDATION
+if (!email.endsWith("@gmail.com")) {
+  setError("Email must end with @gmail.com");
   return;
 }
+
+// 🔹 PASSWORD VALIDATION (Signup only)
+if (!isLogin) {
+  if (password.length < 8) {
+    setError("Password must be at least 8 characters long.");
+    return;
+  }
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+  if (!passwordRegex.test(password)) {
+    setError("Password must contain uppercase, lowercase and a number.");
+    return;
+  }
+}
+
 
 
     try {
