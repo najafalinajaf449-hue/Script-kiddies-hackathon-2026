@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const [darkMode, setDarkMode] = useState(false);
@@ -43,6 +44,7 @@ export default function HomePage() {
 
           {/* Buttons */}
           <div className="flex items-center gap-4">
+            {/* Dark Mode Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 rounded-full hover:bg-primary/10 transition"
@@ -52,9 +54,13 @@ export default function HomePage() {
               </span>
             </button>
 
-            <button className="px-6 py-2 text-sm font-semibold rounded-full hover:bg-primary/10 transition-all">
+            {/* LOGIN ROUTES TO AUTH PAGE */}
+            <Link
+              to="/auth"
+              className="px-6 py-2 text-sm font-semibold rounded-full hover:bg-primary/10 transition-all"
+            >
               Login
-            </button>
+            </Link>
 
             <button className="px-6 py-2 bg-primary text-background-dark text-sm font-bold rounded-full shadow-lg shadow-primary/20 hover:scale-105 transition-all">
               Get Started
