@@ -6,7 +6,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 export default function GreenStreakAuth() {
   const navigate = useNavigate();
 
-  const [isLogin, setIsLogin] = useState(false); // 🔥 Toggle Mode
+  const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,79 +17,51 @@ export default function GreenStreakAuth() {
     e.preventDefault();
     setError("");
 
- // Required fields check
-if (!email || !password || (!isLogin && !fullName)) {
-  setError("Please fill all required fields");
-  return;
-}
-
-// 🔹 NAME VALIDATION (Signup only)
-if (!isLogin) {
-  const nameRegex = /^[A-Za-z ]+$/;
-  if (!nameRegex.test(fullName)) {
-    setError("Name should only contain letters and spaces.");
-    return;
-  }
-}
-
-// 🔹 EMAIL VALIDATION
-if (!email.endsWith("@gmail.com")) {
-  setError("Email must end with @gmail.com");
-  return;
-}
-
-// 🔹 PASSWORD VALIDATION (Signup only)
-if (!isLogin) {
-  if (password.length < 8) {
-    setError("Password must be at least 8 characters long.");
-    return;
-  }
-
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
-  if (!passwordRegex.test(password)) {
-    setError("Password must contain uppercase, lowercase and a number.");
-    return;
-  }
-}
-
-
+    if (!email || !password || (!isLogin && !fullName)) {
+      setError("Please fill all required fields");
+      return;
+    }
 
     try {
       const userRef = doc(db, "users", email);
       const userSnap = await getDoc(userRef);
 
       if (isLogin) {
-        // 🔵 LOGIN FLOW
+        // 🔵 LOGIN
         if (!userSnap.exists()) {
-          setError("User does not exist");
+          setError("Account not found.");
           return;
         }
 
-        const storedPassword = userSnap.data().password;
-
-        if (storedPassword !== password) {
-          setError("Invalid password");
+        if (userSnap.data().password !== password) {
+          setError("Incorrect password.");
           return;
         }
+
       } else {
-        // 🟢 SIGNUP FLOW
+        // 🟢 SIGNUP
         if (userSnap.exists()) {
-          setError("User already exists. Please login.");
+          setError("Account already exists. Please login.");
           return;
         }
 
         await setDoc(userRef, {
           name: fullName,
-          email: email,
-          password: password, // demo only
+          email,
+          password,
           points: 1000,
-          streak: 1,
-          createdAt: new Date(),
+          streak: 0,
+          lastCompletedDate: null,
+          createdAt: new Date()
         });
       }
 
+      // ✅ Save session
       localStorage.setItem("userEmail", email);
+
+      // ✅ Go to dashboard
       navigate("/dashboard");
+
     } catch (err) {
       console.error(err);
       setError("Something went wrong.");
@@ -100,62 +72,48 @@ if (!isLogin) {
     <main className="flex min-h-screen bg-background-light font-display text-neutral-800">
       <section className="w-full flex items-center justify-center p-8">
         <div className="w-full max-w-md space-y-8">
+
           <div>
             <h2 className="text-3xl font-bold mb-2">
               {isLogin ? "Login to GreenStreak" : "Create Account"}
             </h2>
-            <p className="text-neutral-500">
-              {isLogin
-                ? "Enter your credentials to continue."
-                : "Start your sustainability streak today."}
-            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Full Name (Signup Only) */}
-            {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-5 py-3 rounded-full border outline-none"
-                />
-              </div>
-            )}
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
+            {!isLogin && (
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-5 py-3 rounded-full border outline-none"
               />
-            </div>
+            )}
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-5 py-3 rounded-full border outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-5 py-3 rounded-full border outline-none"
+            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-5 py-3 rounded-full border outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
 
             {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -168,7 +126,6 @@ if (!isLogin) {
             </button>
           </form>
 
-          {/* Toggle Button */}
           <p className="text-center text-sm">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button
@@ -181,6 +138,7 @@ if (!isLogin) {
               {isLogin ? "Create Account" : "Login"}
             </button>
           </p>
+
         </div>
       </section>
     </main>

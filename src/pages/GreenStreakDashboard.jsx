@@ -8,10 +8,12 @@ export default function GreenStreakDashboard() {
 
   const [userName, setUserName] = useState("");
   const [points, setPoints] = useState(0);
+  const [streak, setStreak] = useState(0);
 
-  // 🔐 Protect Route (Redirect if not logged in)
+  // 🔐 Protect Route + Fetch User
   useEffect(() => {
     const email = localStorage.getItem("userEmail");
+
     if (!email) {
       navigate("/auth");
       return;
@@ -22,8 +24,10 @@ export default function GreenStreakDashboard() {
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
-        setUserName(userSnap.data().name);
-        setPoints(userSnap.data().points);
+        const data = userSnap.data();
+        setUserName(data.name);
+        setPoints(data.points);
+        setStreak(data.streak || 0);
       }
     };
 
@@ -48,8 +52,6 @@ export default function GreenStreakDashboard() {
   const daysInMonth = lastDay.getDate();
   const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
 
-  const streakDays = [1, 2, 3, 4, 5, 6, 7, 8];
-
   return (
     <div className="min-h-screen font-display text-slate-800 bg-gradient-to-br from-green-50 via-white to-green-100">
 
@@ -57,7 +59,6 @@ export default function GreenStreakDashboard() {
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-primary/10 px-8 py-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
 
-          {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-md">
               <span className="material-symbols-outlined text-white">
@@ -69,9 +70,7 @@ export default function GreenStreakDashboard() {
             </span>
           </div>
 
-          {/* Right Controls */}
           <div className="flex items-center gap-4">
-
             <Link
               to="/"
               className="px-4 py-2 bg-primary text-white rounded-full text-sm font-semibold hover:scale-105 transition-all"
@@ -87,33 +86,19 @@ export default function GreenStreakDashboard() {
             </button>
 
             <button
-              onClick={() =>
-                window.open(
-                  "https://subjecttoclimate.org/teacher-guides/10-climate-change-games-for-the-classroom#Shopping",
-                  "_blank"
-                )
-              }
-              className="bg-primary text-white px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:scale-110 hover:shadow-primary/50 transition-all duration-300"
-            >
-              🎮 Game
-            </button>
-
-            {/* 🔥 NEW LOGOUT BUTTON */}
-            <button
               onClick={handleLogout}
               className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:scale-105 transition-all"
             >
               🚪 Logout
             </button>
-
           </div>
         </div>
       </nav>
 
       {/* ================= MAIN ================= */}
-      <main className="max-w-7xl mx-auto px-8 py-12 space-y-12 fade-up">
+      <main className="max-w-7xl mx-auto px-8 py-12 space-y-12">
 
-        {/* HEADER */}
+        {/* ✅ HEADER (ONLY ONCE) */}
         <div>
           <h1 className="text-3xl font-bold">
             Hello, {userName || "Eco Warrior"} 👋
@@ -126,6 +111,10 @@ export default function GreenStreakDashboard() {
           <p className="text-primary font-bold mt-3 text-lg">
             Points: {points}
           </p>
+
+          <p className="text-green-600 font-semibold mt-1 text-lg">
+            🔥 Current Streak: {streak} days
+          </p>
         </div>
 
         {/* ===== MAIN GRID ===== */}
@@ -134,20 +123,13 @@ export default function GreenStreakDashboard() {
           {/* ===== CHALLENGE CARD ===== */}
           <div className="lg:col-span-1 bg-white p-6 rounded-3xl border border-primary/20 shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
 
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">Today's Challenge</h2>
-              <span className="text-xs bg-primary/10 text-primary px-3 py-1 rounded-md font-bold uppercase">
-                Expires in 8h
-              </span>
-            </div>
+            <h2 className="text-xl font-bold mb-4">Today's Challenge</h2>
 
-            <div className="w-full aspect-video rounded-xl overflow-hidden mb-4">
-              <img
-                src="https://images.unsplash.com/photo-1602143407151-7111542de6e8"
-                alt="Reusable bottle"
-                className="w-full h-full object-cover hover:scale-110 transition duration-500"
-              />
-            </div>
+            <img
+              src="https://images.unsplash.com/photo-1602143407151-7111542de6e8"
+              alt="Reusable bottle"
+              className="w-full rounded-xl mb-4"
+            />
 
             <h3 className="font-bold text-lg mb-2">
               Skip the Plastic
@@ -163,24 +145,21 @@ export default function GreenStreakDashboard() {
 
             <button
               onClick={() => navigate("/challenge")}
-              className="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-lg hover:scale-105 hover:shadow-primary/50 transition-all duration-300"
+              className="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-lg hover:scale-105 transition-all duration-300"
             >
               Complete Task
             </button>
           </div>
 
           {/* ===== CALENDAR ===== */}
-          <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-primary/10 shadow-md hover:shadow-xl transition-all duration-300">
+          <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-primary/10 shadow-md">
 
-            <div className="mb-8">
-              <h2 className="text-xl font-bold">Streak Calendar</h2>
-              <p className="text-sm text-slate-400">
-                {today.toLocaleString("default", { month: "long" })} {currentYear}
-              </p>
-            </div>
+            <h2 className="text-xl font-bold mb-6">
+              Streak Calendar
+            </h2>
 
             <div className="grid grid-cols-7 gap-y-6 text-center">
-              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+              {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d) => (
                 <div key={d} className="text-xs font-bold text-slate-400 uppercase">
                   {d}
                 </div>
@@ -195,23 +174,23 @@ export default function GreenStreakDashboard() {
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1;
                 const isToday = day === today.getDate();
-                const isStreak = streakDays.includes(day);
+                const isStreakDay = day <= streak;
 
                 return (
                   <div key={day} className="flex justify-center">
-                    {isStreak ? (
+                    {isStreakDay ? (
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold
                         ${
                           isToday
-                            ? "bg-primary text-white pulse-glow"
-                            : "bg-primary/10 border-2 border-primary text-primary hover:bg-primary hover:text-white"
+                            ? "bg-primary text-white"
+                            : "bg-primary/10 border-2 border-primary text-primary"
                         }`}
                       >
                         {day}
                       </div>
                     ) : (
-                      <div className="w-10 h-10 flex items-center justify-center text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-full transition">
+                      <div className="w-10 h-10 flex items-center justify-center text-sm">
                         {day}
                       </div>
                     )}
@@ -219,6 +198,7 @@ export default function GreenStreakDashboard() {
                 );
               })}
             </div>
+
           </div>
 
         </div>
